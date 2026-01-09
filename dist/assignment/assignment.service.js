@@ -67,7 +67,7 @@ let AssignmentService = class AssignmentService {
             else {
                 assignment.total = minutos * assignment.tarifa;
             }
-            const puntos = Math.floor(minutos / 1);
+            const puntos = Math.floor(minutos / 10);
             if (puntos > 0) {
                 const car = await this.carRepository.findOneBy({ id: assignment.carId });
                 if (car) {

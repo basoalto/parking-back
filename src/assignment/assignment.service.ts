@@ -61,7 +61,7 @@ export class AssignmentService {
       }
 
       // <---LA LÓGICA DE PUNTAJE --->
-      const puntos = Math.floor(minutos / 1);
+      const puntos = Math.floor(minutos / 10); // 1 punto cada 10 minutos
       if (puntos > 0) {
         const car = await this.carRepository.findOneBy({ id: assignment.carId });
         if (car) {

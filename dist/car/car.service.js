@@ -35,8 +35,21 @@ let CarService = class CarService {
         await this.carRepository.update(id, updateCarDto);
         return this.carRepository.findOneBy({ id });
     }
+    async findByPlate(placa) {
+        return this.carRepository.findOneBy({ placa });
+    }
     remove(id) {
         return `This action removes a #${id} car`;
+    }
+    async redeemPrize(placa, prize) {
+        const car = await this.carRepository.findOneBy({ placa });
+        if (!car)
+            throw new Error('Car not found');
+        if (car.puntaje < prize.pointsRequired)
+            throw new Error('Not enough points');
+        car.puntaje -= prize.pointsRequired;
+        await this.carRepository.save(car);
+        return car;
     }
 };
 exports.CarService = CarService;
