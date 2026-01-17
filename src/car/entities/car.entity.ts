@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Person } from '../../person/entities/person.entity';
 
 @Entity()
 export class Car {
@@ -19,5 +20,8 @@ export class Car {
 
   @Column({ default: 0 })
   puntaje: number;
+
+  @ManyToOne(() => Person, person => person.cars, { nullable: true })
+  person: Person;
 
 }

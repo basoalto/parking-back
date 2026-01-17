@@ -5,13 +5,35 @@ import { Repository } from 'typeorm';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { Car } from './entities/car.entity';
+import { AssignPersonToCarDto } from './dto/assign-person-to-car.dto';
+import { Person } from '../person/entities/person.entity';
 
 @Injectable()
 export class CarService {
   constructor(
     @InjectRepository(Car)
     private carRepository: Repository<Car>,
+    @InjectRepository(Person)
+    private personRepository: Repository<Person>,
   ) {}
+  async assignPersonToCar(assignPersonToCarDto: AssignPersonToCarDto) {
+    const { carId, rut } = assignPersonToCarDto;
+    let car = await this.carRepository.findOne({ where: { id: carId }, relations: ['person'] });
+    if (!car) {
+      // Crear auto mínimo si no existe
+      
+      car = this.carRepository.create({ id: carId, placa: '', marca: '', modelo: '', color: '', puntaje: 0 });
+      await this.carRepository.save(car);
+    }
+    let person = await this.personRepository.findOne({ where: { rut } });
+    if (!person) {
+      person = this.personRepository.create({ rut, nombre: rut }); // nombre temporal igual al rut
+      await this.personRepository.save(person);
+    }
+    car.person = person;
+    await this.carRepository.save(car);
+    return car;
+  }
 
   create(createCarDto: CreateCarDto) {
     return 'This action adds a new car';

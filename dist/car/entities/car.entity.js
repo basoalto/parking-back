@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Car = void 0;
 const typeorm_1 = require("typeorm");
+const person_entity_1 = require("../../person/entities/person.entity");
 let Car = class Car {
     id;
     placa;
@@ -18,6 +19,7 @@ let Car = class Car {
     modelo;
     color;
     puntaje;
+    person;
 };
 exports.Car = Car;
 __decorate([
@@ -44,6 +46,10 @@ __decorate([
     (0, typeorm_1.Column)({ default: 0 }),
     __metadata("design:type", Number)
 ], Car.prototype, "puntaje", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => person_entity_1.Person, person => person.cars, { nullable: true }),
+    __metadata("design:type", person_entity_1.Person)
+], Car.prototype, "person", void 0);
 exports.Car = Car = __decorate([
     (0, typeorm_1.Entity)()
 ], Car);

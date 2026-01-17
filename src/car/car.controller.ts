@@ -1,3 +1,5 @@
+import { AssignPersonToCarDto } from './dto/assign-person-to-car.dto';
+
 import { PrizeService } from '../prize/prize.service';
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CarService } from './car.service';
@@ -16,7 +18,10 @@ export class CarController {
     if (!prize) throw new Error('Prize not found');
     return this.carService.redeemPrize(placa, prize);
   }
-
+  @Post('assign-person')
+  async assignPersonToCar(@Body() assignPersonToCarDto: AssignPersonToCarDto) {
+    return this.carService.assignPersonToCar(assignPersonToCarDto);
+  }
   @Post()
   create(@Body() createCarDto: CreateCarDto) {
     return this.carService.create(createCarDto);

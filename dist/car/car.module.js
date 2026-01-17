@@ -13,12 +13,13 @@ const car_service_1 = require("./car.service");
 const car_controller_1 = require("./car.controller");
 const car_entity_1 = require("./entities/car.entity");
 const prize_module_1 = require("../prize/prize.module");
+const person_entity_1 = require("../person/entities/person.entity");
 let CarModule = class CarModule {
 };
 exports.CarModule = CarModule;
 exports.CarModule = CarModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([car_entity_1.Car]), prize_module_1.PrizeModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([car_entity_1.Car, person_entity_1.Person]), prize_module_1.PrizeModule],
         controllers: [car_controller_1.CarController],
         providers: [car_service_1.CarService],
         exports: [typeorm_1.TypeOrmModule],

@@ -1,3 +1,4 @@
+import { Person } from '../../person/entities/person.entity';
 export declare class Car {
     id: number;
     placa: string;
@@ -5,4 +6,5 @@ export declare class Car {
     modelo: string;
     color: string;
     puntaje: number;
+    person: Person;
 }

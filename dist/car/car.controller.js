@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarController = void 0;
+const assign_person_to_car_dto_1 = require("./dto/assign-person-to-car.dto");
 const prize_service_1 = require("../prize/prize.service");
 const common_1 = require("@nestjs/common");
 const car_service_1 = require("./car.service");
@@ -29,6 +30,9 @@ let CarController = class CarController {
         if (!prize)
             throw new Error('Prize not found');
         return this.carService.redeemPrize(placa, prize);
+    }
+    async assignPersonToCar(assignPersonToCarDto) {
+        return this.carService.assignPersonToCar(assignPersonToCarDto);
     }
     create(createCarDto) {
         return this.carService.create(createCarDto);
@@ -58,6 +62,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], CarController.prototype, "redeemPrize", null);
+__decorate([
+    (0, common_1.Post)('assign-person'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [assign_person_to_car_dto_1.AssignPersonToCarDto]),
+    __metadata("design:returntype", Promise)
+], CarController.prototype, "assignPersonToCar", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

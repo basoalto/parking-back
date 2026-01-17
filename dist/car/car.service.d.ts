@@ -1,9 +1,13 @@
 import { Repository } from 'typeorm';
 import { CreateCarDto } from './dto/create-car.dto';
 import { Car } from './entities/car.entity';
+import { AssignPersonToCarDto } from './dto/assign-person-to-car.dto';
+import { Person } from '../person/entities/person.entity';
 export declare class CarService {
     private carRepository;
-    constructor(carRepository: Repository<Car>);
+    private personRepository;
+    constructor(carRepository: Repository<Car>, personRepository: Repository<Person>);
+    assignPersonToCar(assignPersonToCarDto: AssignPersonToCarDto): Promise<Car>;
     create(createCarDto: CreateCarDto): string;
     findAll(): string;
     findOne(id: number): string;
