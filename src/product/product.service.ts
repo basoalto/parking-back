@@ -1,3 +1,4 @@
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,6 +16,7 @@ export class ProductService {
     @InjectRepository(Sale)
     private saleRepository: Repository<Sale>,
   ) {}
+
 
 
   // Crear producto y asociar a inventario de un estacionamiento
@@ -36,6 +38,41 @@ export class ProductService {
     const savedStock = await this.stockRepository.save(stock);
     return { product, stock: savedStock };
   }
+
+  // Ventas totales de todos los productos de un estacionamiento en un rango de fechas
+  async getTotalSalesByParkingLot(parkingLotId: number, startDate: Date, endDate: Date) {
+    const sales = await this.saleRepository
+      .createQueryBuilder('sale')
+      .leftJoinAndSelect('sale.product', 'product')
+      .where('sale.parkingLot = :parkingLotId', { parkingLotId })
+      .andWhere('sale.date BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .select([
+        'product.id AS productId',
+        'product.name AS productName',
+        'SUM(sale.quantity) AS totalQuantity',
+        'SUM(sale.quantity * product.price) AS totalAmount'
+      ])
+      .groupBy('product.id')
+      .addGroupBy('product.name')
+      .getRawMany();
+    return sales;
+  }
+
+  // Ventas totales de un producto por id en un rango de fechas
+  async getTotalSalesByProduct(productId: number, startDate: Date, endDate: Date) {
+    const sales = await this.saleRepository
+      .createQueryBuilder('sale')
+      .leftJoinAndSelect('sale.product', 'product')
+      .where('sale.product = :productId', { productId })
+      .andWhere('sale.date BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .select([
+        'SUM(sale.quantity) AS totalQuantity',
+        'SUM(sale.quantity * product.price) AS totalAmount'
+      ])
+      .getRawOne();
+    return sales;
+  }
+
 
   // Editar producto y opcionalmente actualizar cantidad de stock
   async updateProduct(id: number, dto: any) {
@@ -115,4 +152,7 @@ export class ProductService {
     await this.saleRepository.save(sale);
     return { stock, sale };
   }
+
+
+  
 }

@@ -7,7 +7,7 @@ export class ProductStock {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Product, product => product.stocks)
+  @ManyToOne(() => Product, product => product.stocks, { onDelete: 'CASCADE' })
   product: Product;
 
   @ManyToOne(() => ParkingLot)

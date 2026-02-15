@@ -20,7 +20,35 @@ export class ProductController {
   update(@Param('id') id: number, @Body() dto: UpdateProductDto) {
     return this.productService.updateProduct(id, dto);
   }
+    // ...existing code...
 
+    // Ventas totales de todos los productos de un estacionamiento en un rango de fechas
+    @Get('sales/parkinglot/:parkingLotId')
+    getTotalSalesByParkingLot(
+      @Param('parkingLotId') parkingLotId: number,
+      @Query('startDate') startDate: string,
+      @Query('endDate') endDate: string,
+    ) {
+      return this.productService.getTotalSalesByParkingLot(
+        Number(parkingLotId),
+        new Date(startDate),
+        new Date(endDate)
+      );
+    }
+
+    // Ventas totales de un producto por id en un rango de fechas
+    @Get('sales/product/:productId')
+    getTotalSalesByProduct(
+      @Param('productId') productId: number,
+      @Query('startDate') startDate: string,
+      @Query('endDate') endDate: string,
+    ) {
+      return this.productService.getTotalSalesByProduct(
+        Number(productId),
+        new Date(startDate),
+        new Date(endDate)
+      );
+    }
   // Eliminar producto
   @Delete(':id')
   remove(@Param('id') id: number) {
