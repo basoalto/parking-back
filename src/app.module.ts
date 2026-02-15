@@ -18,6 +18,7 @@ import { Product } from './product/entities/product.entity';
 import { ProductStock } from './product/entities/product-stock.entity';
 import { Sale } from './product/entities/sale.entity';
 import { ProductModule } from './product/product.module';
+import { ProductEntry } from './product/entities/product-entry.entity';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { ProductModule } from './product/product.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [ParkingLot, Car, Assignment, Prize, Person, Product, ProductStock, Sale],
+      entities: [ParkingLot, Car, Assignment, Prize, Person, Product, ProductStock, Sale, ProductEntry],
       synchronize: true, // ¡IMPORTANTE! Solo para desarrollo. Vuelve a false después de crear las tablas.
     }),
     ParkinglotModule,

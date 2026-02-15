@@ -26,6 +26,7 @@ const product_entity_1 = require("./product/entities/product.entity");
 const product_stock_entity_1 = require("./product/entities/product-stock.entity");
 const sale_entity_1 = require("./product/entities/sale.entity");
 const product_module_1 = require("./product/product.module");
+const product_entry_entity_1 = require("./product/entities/product-entry.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -40,7 +41,7 @@ exports.AppModule = AppModule = __decorate([
                 username: process.env.DB_USERNAME,
                 password: process.env.DB_PASSWORD,
                 database: process.env.DB_DATABASE,
-                entities: [parkinglot_entity_1.ParkingLot, car_entity_1.Car, assignment_entity_1.Assignment, prize_entity_1.Prize, person_entity_1.Person, product_entity_1.Product, product_stock_entity_1.ProductStock, sale_entity_1.Sale],
+                entities: [parkinglot_entity_1.ParkingLot, car_entity_1.Car, assignment_entity_1.Assignment, prize_entity_1.Prize, person_entity_1.Person, product_entity_1.Product, product_stock_entity_1.ProductStock, sale_entity_1.Sale, product_entry_entity_1.ProductEntry],
                 synchronize: true,
             }),
             parkinglot_module_1.ParkinglotModule,

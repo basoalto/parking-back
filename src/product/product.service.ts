@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { ProductStock } from './entities/product-stock.entity';
 import { Sale } from './entities/sale.entity';
+import { ProductEntry } from './entities/product-entry.entity';
 
 @Injectable()
 export class ProductService {
@@ -15,6 +16,8 @@ export class ProductService {
     private stockRepository: Repository<ProductStock>,
     @InjectRepository(Sale)
     private saleRepository: Repository<Sale>,
+    @InjectRepository(ProductEntry)
+    private entryRepository: Repository<ProductEntry>,
   ) {}
 
 
@@ -60,6 +63,13 @@ export class ProductService {
 
   // Ventas totales de un producto por id en un rango de fechas
   async getTotalSalesByProduct(productId: number, startDate: Date, endDate: Date) {
+      console.log('[getTotalSalesByProduct] startDate:', startDate, 'endDate:', endDate);
+      // Mostrar el tipo y valor exacto de los parámetros
+      console.log('[getTotalSalesByProduct] typeof startDate:', typeof startDate, 'typeof endDate:', typeof endDate);
+      // Mostrar los valores originales recibidos
+      console.log('[getTotalSalesByProduct] startDate (raw):', startDate);
+      console.log('[getTotalSalesByProduct] endDate (raw):', endDate);
+    // Ventas totales
     const sales = await this.saleRepository
       .createQueryBuilder('sale')
       .leftJoinAndSelect('sale.product', 'product')
@@ -70,7 +80,58 @@ export class ProductService {
         'SUM(sale.quantity * product.price) AS totalAmount'
       ])
       .getRawOne();
-    return sales;
+
+      // Ajustar endDate para incluir todo el día
+      let startDateStr = '';
+      let endDateStr = '';
+      if (startDate) {
+        if (typeof startDate === 'string') {
+          startDateStr = String(startDate).slice(0, 10);
+        } else if (startDate instanceof Date) {
+          startDateStr = startDate.toISOString().slice(0, 10);
+        } else {
+          startDateStr = String(startDate).slice(0, 10);
+        }
+      }
+      if (endDate) {
+        if (typeof endDate === 'string') {
+          endDateStr = String(endDate).slice(0, 10);
+        } else if (endDate instanceof Date) {
+          endDateStr = endDate.toISOString().slice(0, 10);
+        } else {
+          endDateStr = String(endDate).slice(0, 10);
+        }
+      }
+      // Historial de ingresos
+      const entries = await this.entryRepository.createQueryBuilder('entry')
+        .where('entry.productId = :productId', { productId })
+        .andWhere('DATE(entry.date) BETWEEN :startDate AND :endDate', { startDate: startDateStr, endDate: endDateStr })
+        .orderBy('entry.date', 'ASC')
+        .getMany();
+      if (entries.length > 0) {
+        console.log('[getTotalSalesByProduct] fechas de ingresos:', entries.map(e => e.date));
+        // Mostrar comparación de cada fecha de ingreso con el rango
+        entries.forEach(e => {
+          const entryDate = e.date instanceof Date ? e.date.toISOString() : e.date;
+          console.log(`[getTotalSalesByProduct] Comparando ingreso: ${entryDate} (solo fecha: ${entryDate.substring(0,10)}) con rango ${startDate} - ${endDate}`);
+        });
+      } else {
+        console.log('[getTotalSalesByProduct] No hay ingresos encontrados para el rango.');
+      }
+
+    // Calcular total de ingresos
+    const totalEntries = entries.reduce((sum, e) => sum + e.quantity, 0);
+    // Calcular total de cantidades vendidas
+    let totalSold = 0;
+    if (sales && sales.totalQuantity) {
+      totalSold = Number(sales.totalQuantity);
+    }
+    return {
+      sales,
+      entries,
+      totalEntries,
+      totalSold
+    };
   }
 
 
@@ -78,6 +139,7 @@ export class ProductService {
   async updateProduct(id: number, dto: any) {
     const { quantity, parkingLotId, ...productFields } = dto;
     // Actualizar producto
+    console.log('[updateProduct] dto:', dto);
     await this.productRepository.update(id, productFields);
     let stockUpdate: ProductStock | null = null;
     if (typeof quantity === 'number' && parkingLotId) {
@@ -86,10 +148,29 @@ export class ProductService {
         where: { product: { id }, parkingLot: { id: parkingLotId } },
         relations: ['product', 'parkingLot'],
       });
+      console.log('[updateProduct] stock encontrado:', stock);
       if (stock) {
+        const cantidadAnterior = stock.quantity;
         stock.quantity = quantity;
         stockUpdate = await this.stockRepository.save(stock);
+        console.log('[updateProduct] cantidadAnterior:', cantidadAnterior, 'nueva cantidad:', quantity);
+        // Registrar solo si la cantidad aumenta
+        if (quantity > cantidadAnterior) {
+          const entry = this.entryRepository.create({
+            product: { id },
+            parkingLot: { id: parkingLotId },
+            quantity: quantity - cantidadAnterior,
+          });
+          await this.entryRepository.save(entry);
+          console.log('[updateProduct] Registro en ProductEntry:', entry);
+        } else {
+          console.log('[updateProduct] No se registra entrada porque la cantidad no aumentó.');
+        }
+      } else {
+        console.log('[updateProduct] No se encontró stock para el producto y estacionamiento indicados.');
       }
+    } else {
+      console.log('[updateProduct] quantity o parkingLotId no válidos:', quantity, parkingLotId);
     }
     const product = await this.productRepository.findOne({ where: { id } });
     return { product, stock: stockUpdate };
@@ -132,7 +213,15 @@ export class ProductService {
         quantity: dto.quantity,
       });
     }
-    return this.stockRepository.save(stock);
+    const savedStock = await this.stockRepository.save(stock);
+    // Registrar el ingreso en ProductEntry
+    const entry = this.entryRepository.create({
+      product: { id: dto.productId },
+      parkingLot: { id: dto.parkingLotId },
+      quantity: dto.quantity,
+    });
+    await this.entryRepository.save(entry);
+    return savedStock;
   }
 
   // Descontar inventario de un producto y registrar venta
