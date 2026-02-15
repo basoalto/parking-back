@@ -14,14 +14,13 @@ export class CarService {
     @InjectRepository(Car)
     private carRepository: Repository<Car>,
     @InjectRepository(Person)
-    private personRepository: Repository<Person>,
+    private personRepository: Repository <Person>,
   ) {}
   async assignPersonToCar(assignPersonToCarDto: AssignPersonToCarDto) {
     const { carId, rut } = assignPersonToCarDto;
     let car = await this.carRepository.findOne({ where: { id: carId }, relations: ['person'] });
     if (!car) {
       // Crear auto mínimo si no existe
-      
       car = this.carRepository.create({ id: carId, placa: '', marca: '', modelo: '', color: '', puntaje: 0 });
       await this.carRepository.save(car);
     }

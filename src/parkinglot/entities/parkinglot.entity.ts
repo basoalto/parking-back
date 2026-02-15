@@ -14,6 +14,6 @@ export class ParkingLot {
   @Column('decimal')
   tarifaPorHora: number;
 
-  @Column('decimal')
+  @Column('decimal', { default: 0 })
   tarifaMinima: number;
 }

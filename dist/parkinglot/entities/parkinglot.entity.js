@@ -36,7 +36,7 @@ __decorate([
     __metadata("design:type", Number)
 ], ParkingLot.prototype, "tarifaPorHora", void 0);
 __decorate([
-    (0, typeorm_1.Column)('decimal'),
+    (0, typeorm_1.Column)('decimal', { default: 0 }),
     __metadata("design:type", Number)
 ], ParkingLot.prototype, "tarifaMinima", void 0);
 exports.ParkingLot = ParkingLot = __decorate([

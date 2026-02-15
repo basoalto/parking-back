@@ -14,6 +14,10 @@ import { PrizeModule } from './prize/prize.module';
 import { Prize } from './prize/entities/prize.entity';
 import { Person } from './person/entities/person.entity';
 import { PersonModule } from './person/person.module';
+import { Product } from './product/entities/product.entity';
+import { ProductStock } from './product/entities/product-stock.entity';
+import { Sale } from './product/entities/sale.entity';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -25,14 +29,15 @@ import { PersonModule } from './person/person.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [ParkingLot, Car, Assignment, Prize, Person],
-      synchronize: false,
+      entities: [ParkingLot, Car, Assignment, Prize, Person, Product, ProductStock, Sale],
+      synchronize: true, // ¡IMPORTANTE! Solo para desarrollo. Vuelve a false después de crear las tablas.
     }),
     ParkinglotModule,
     CarModule,
     AssignmentModule,
     PrizeModule,
     PersonModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

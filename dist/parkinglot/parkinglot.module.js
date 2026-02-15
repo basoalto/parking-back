@@ -12,12 +12,13 @@ const typeorm_1 = require("@nestjs/typeorm");
 const parkinglot_service_1 = require("./parkinglot.service");
 const parkinglot_controller_1 = require("./parkinglot.controller");
 const parkinglot_entity_1 = require("./entities/parkinglot.entity");
+const product_module_1 = require("../product/product.module");
 let ParkinglotModule = class ParkinglotModule {
 };
 exports.ParkinglotModule = ParkinglotModule;
 exports.ParkinglotModule = ParkinglotModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([parkinglot_entity_1.ParkingLot])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([parkinglot_entity_1.ParkingLot]), product_module_1.ProductModule],
         controllers: [parkinglot_controller_1.ParkinglotController],
         providers: [parkinglot_service_1.ParkinglotService],
         exports: [typeorm_1.TypeOrmModule],
