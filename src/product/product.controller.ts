@@ -74,11 +74,13 @@ export class ProductController {
   }
 
   // Descontar inventario de un producto
-  @Patch('stock/:stockId/decrement')
+  // Descontar inventario de un producto
+  @Patch('stock/:productId/:parkingLotId/decrement')
   decrementStock(
-    @Param('stockId') stockId: number,
+    @Param('productId') productId: number,
+    @Param('parkingLotId') parkingLotId: number,
     @Body() dto: UpdateProductStockDto,
   ) {
-    return this.productService.decrementProductStock(stockId, dto.quantity);
+    return this.productService.decrementProductStock(productId, parkingLotId, dto.quantity);
   }
 }

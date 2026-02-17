@@ -70,11 +70,32 @@ export class ProductService {
       console.log('[getTotalSalesByProduct] startDate (raw):', startDate);
       console.log('[getTotalSalesByProduct] endDate (raw):', endDate);
     // Ventas totales
+    // Convertir fechas a string yyyy-MM-dd
+    let startDateStr = '';
+    let endDateStr = '';
+    if (startDate) {
+      if (typeof startDate === 'string') {
+        startDateStr = String(startDate).slice(0, 10);
+      } else if (startDate instanceof Date) {
+        startDateStr = startDate.toISOString().slice(0, 10);
+      } else {
+        startDateStr = String(startDate).slice(0, 10);
+      }
+    }
+    if (endDate) {
+      if (typeof endDate === 'string') {
+        endDateStr = String(endDate).slice(0, 10);
+      } else if (endDate instanceof Date) {
+        endDateStr = endDate.toISOString().slice(0, 10);
+      } else {
+        endDateStr = String(endDate).slice(0, 10);
+      }
+    }
     const sales = await this.saleRepository
       .createQueryBuilder('sale')
       .leftJoinAndSelect('sale.product', 'product')
       .where('sale.product = :productId', { productId })
-      .andWhere('sale.date BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('DATE(sale.date) BETWEEN :startDate AND :endDate', { startDate: startDateStr, endDate: endDateStr })
       .select([
         'SUM(sale.quantity) AS totalQuantity',
         'SUM(sale.quantity * product.price) AS totalAmount'
@@ -82,26 +103,7 @@ export class ProductService {
       .getRawOne();
 
       // Ajustar endDate para incluir todo el día
-      let startDateStr = '';
-      let endDateStr = '';
-      if (startDate) {
-        if (typeof startDate === 'string') {
-          startDateStr = String(startDate).slice(0, 10);
-        } else if (startDate instanceof Date) {
-          startDateStr = startDate.toISOString().slice(0, 10);
-        } else {
-          startDateStr = String(startDate).slice(0, 10);
-        }
-      }
-      if (endDate) {
-        if (typeof endDate === 'string') {
-          endDateStr = String(endDate).slice(0, 10);
-        } else if (endDate instanceof Date) {
-          endDateStr = endDate.toISOString().slice(0, 10);
-        } else {
-          endDateStr = String(endDate).slice(0, 10);
-        }
-      }
+      // ...existing code...
       // Historial de ingresos
       const entries = await this.entryRepository.createQueryBuilder('entry')
         .where('entry.productId = :productId', { productId })
@@ -225,9 +227,18 @@ export class ProductService {
   }
 
   // Descontar inventario de un producto y registrar venta
-  async decrementProductStock(stockId: number, quantity: number) {
-    const stock = await this.stockRepository.findOne({ where: { id: stockId }, relations: ['product', 'parkingLot'] });
-    if (!stock) throw new Error('Stock not found');
+  async decrementProductStock(productId: number, parkingLotId: number, quantity: number) {
+    const stock = await this.stockRepository.findOne({
+      where: {
+        product: { id: productId },
+        parkingLot: { id: parkingLotId },
+      },
+      relations: ['product', 'parkingLot'],
+    });
+    if (!stock) {
+      console.error(`[decrementProductStock] No se encontró stock para producto ${productId} y estacionamiento ${parkingLotId}`);
+      throw new Error(`No se encontró inventario para el producto ${productId} y estacionamiento ${parkingLotId}. Verifica que el stock exista antes de descontar.`);
+    }
     if (stock.quantity < quantity) throw new Error('Not enough stock');
     stock.quantity -= quantity;
     await this.stockRepository.save(stock);
