@@ -44,11 +44,32 @@ export class ProductService {
 
   // Ventas totales de todos los productos de un estacionamiento en un rango de fechas
   async getTotalSalesByParkingLot(parkingLotId: number, startDate: Date, endDate: Date) {
+    // Ajustar startDate y endDate para incluir todo el día
+    let startDateStr = '';
+    let endDateStr = '';
+    if (startDate) {
+      if (typeof startDate === 'string') {
+        startDateStr = String(startDate).slice(0, 10);
+      } else if (startDate instanceof Date) {
+        startDateStr = startDate.toISOString().slice(0, 10);
+      } else {
+        startDateStr = String(startDate).slice(0, 10);
+      }
+    }
+    if (endDate) {
+      if (typeof endDate === 'string') {
+        endDateStr = String(endDate).slice(0, 10);
+      } else if (endDate instanceof Date) {
+        endDateStr = endDate.toISOString().slice(0, 10);
+      } else {
+        endDateStr = String(endDate).slice(0, 10);
+      }
+    }
     const sales = await this.saleRepository
       .createQueryBuilder('sale')
       .leftJoinAndSelect('sale.product', 'product')
       .where('sale.parkingLot = :parkingLotId', { parkingLotId })
-      .andWhere('sale.date BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('DATE(sale.date) BETWEEN :startDate AND :endDate', { startDate: startDateStr, endDate: endDateStr })
       .select([
         'product.id AS productId',
         'product.name AS productName',
