@@ -24,8 +24,9 @@ export class ProductService {
 
   // Crear producto y asociar a inventario de un estacionamiento
   async createProductWithStock(dto: any) {
-    const { parkingLotId, quantity, ...productData } = dto;
-    const created = this.productRepository.create(productData);
+    const { parkingLotId, quantity, costPrice, ...productData } = dto;
+    // Incluir costPrice si viene en el DTO
+    const created = this.productRepository.create({ ...productData, costPrice });
     if (!created || Array.isArray(created)) {
       throw new Error('Error: create() devolvió un array o valor inválido, se esperaba un solo producto.');
     }
