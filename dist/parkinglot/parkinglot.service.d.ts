@@ -7,6 +7,7 @@ export declare class ParkinglotService {
     constructor(parkingLotRepository: Repository<ParkingLot>);
     create(createParkinglotDto: CreateParkinglotDto): Promise<ParkingLot>;
     findAll(): Promise<ParkingLot[]>;
+    findByCompanyId(companyId: number): Promise<ParkingLot[]>;
     findOne(id: number): Promise<ParkingLot | null>;
     update(id: number, updateParkinglotDto: UpdateParkinglotDto): Promise<import("typeorm").UpdateResult>;
     remove(id: number): Promise<import("typeorm").DeleteResult>;

@@ -16,6 +16,9 @@ export declare class AssignmentService {
     remove(id: number): Promise<{
         deleted: boolean;
     }>;
+    getTotalByParkingLotAndDate(parkingLotId: number, startDate: string, endDate: string): Promise<{
+        total: number;
+    }>;
     createByPlate(placa: string, parkingLotId: number): Promise<Assignment>;
     findActiveByParkingLot(parkingLotId: number): Promise<{
         id: any;

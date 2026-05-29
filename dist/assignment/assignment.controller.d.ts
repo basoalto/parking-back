@@ -6,6 +6,9 @@ export declare class AssignmentController {
     constructor(assignmentService: AssignmentService);
     create(createAssignmentDto: CreateAssignmentDto): Promise<import("./entities/assignment.entity").Assignment>;
     findAll(): Promise<import("./entities/assignment.entity").Assignment[]>;
+    getTotalByParkingLotAndDate(parkingLotId: string, startDate: string, endDate: string): Promise<{
+        total: number;
+    }>;
     findOne(id: string): Promise<import("./entities/assignment.entity").Assignment | null>;
     update(id: string, updateAssignmentDto: UpdateAssignmentDto): Promise<import("./entities/assignment.entity").Assignment | null>;
     remove(id: string): Promise<{

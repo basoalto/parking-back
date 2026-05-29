@@ -20,6 +20,13 @@ import { Sale } from './product/entities/sale.entity';
 import { ProductModule } from './product/product.module';
 import { ProductEntry } from './product/entities/product-entry.entity';
 
+import { Company } from './company/entities/company.entity';
+import { CompanyModule } from './company/company.module';
+import { User } from './user/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { PaymentsModule } from './payments/payments.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -30,7 +37,7 @@ import { ProductEntry } from './product/entities/product-entry.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [ParkingLot, Car, Assignment, Prize, Person, Product, ProductStock, Sale, ProductEntry],
+      entities: [ParkingLot, Car, Assignment, Prize, Person, Product, ProductStock, Sale, ProductEntry, Company, User],
       synchronize: true, // ¡IMPORTANTE! Solo para desarrollo. Vuelve a false después de crear las tablas.
     }),
     ParkinglotModule,
@@ -39,6 +46,10 @@ import { ProductEntry } from './product/entities/product-entry.entity';
     PrizeModule,
     PersonModule,
     ProductModule,
+    CompanyModule,
+    AuthModule,
+    UserModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

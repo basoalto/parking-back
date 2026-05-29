@@ -29,6 +29,9 @@ let ParkinglotService = class ParkinglotService {
     findAll() {
         return this.parkingLotRepository.find();
     }
+    findByCompanyId(companyId) {
+        return this.parkingLotRepository.find({ where: { companyId } });
+    }
     findOne(id) {
         return this.parkingLotRepository.findOneBy({ id });
     }

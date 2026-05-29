@@ -17,8 +17,13 @@ export class ParkinglotService {
     return this.parkingLotRepository.save(parkingLot);
   }
 
+
   findAll() {
     return this.parkingLotRepository.find();
+  }
+
+  findByCompanyId(companyId: number) {
+    return this.parkingLotRepository.find({ where: { companyId } });
   }
 
   findOne(id: number) {

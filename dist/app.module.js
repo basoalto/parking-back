@@ -27,6 +27,12 @@ const product_stock_entity_1 = require("./product/entities/product-stock.entity"
 const sale_entity_1 = require("./product/entities/sale.entity");
 const product_module_1 = require("./product/product.module");
 const product_entry_entity_1 = require("./product/entities/product-entry.entity");
+const company_entity_1 = require("./company/entities/company.entity");
+const company_module_1 = require("./company/company.module");
+const user_entity_1 = require("./user/entities/user.entity");
+const auth_module_1 = require("./auth/auth.module");
+const user_module_1 = require("./user/user.module");
+const payments_module_1 = require("./payments/payments.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -41,7 +47,7 @@ exports.AppModule = AppModule = __decorate([
                 username: process.env.DB_USERNAME,
                 password: process.env.DB_PASSWORD,
                 database: process.env.DB_DATABASE,
-                entities: [parkinglot_entity_1.ParkingLot, car_entity_1.Car, assignment_entity_1.Assignment, prize_entity_1.Prize, person_entity_1.Person, product_entity_1.Product, product_stock_entity_1.ProductStock, sale_entity_1.Sale, product_entry_entity_1.ProductEntry],
+                entities: [parkinglot_entity_1.ParkingLot, car_entity_1.Car, assignment_entity_1.Assignment, prize_entity_1.Prize, person_entity_1.Person, product_entity_1.Product, product_stock_entity_1.ProductStock, sale_entity_1.Sale, product_entry_entity_1.ProductEntry, company_entity_1.Company, user_entity_1.User],
                 synchronize: true,
             }),
             parkinglot_module_1.ParkinglotModule,
@@ -50,6 +56,10 @@ exports.AppModule = AppModule = __decorate([
             prize_module_1.PrizeModule,
             person_module_1.PersonModule,
             product_module_1.ProductModule,
+            company_module_1.CompanyModule,
+            auth_module_1.AuthModule,
+            user_module_1.UserModule,
+            payments_module_1.PaymentsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -11,12 +11,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParkingLot = void 0;
 const typeorm_1 = require("typeorm");
+const company_entity_1 = require("../../company/entities/company.entity");
 let ParkingLot = class ParkingLot {
     id;
     nombre;
     direccion;
     tarifaPorHora;
     tarifaMinima;
+    company;
+    companyId;
 };
 exports.ParkingLot = ParkingLot;
 __decorate([
@@ -39,6 +42,15 @@ __decorate([
     (0, typeorm_1.Column)('decimal', { default: 0 }),
     __metadata("design:type", Number)
 ], ParkingLot.prototype, "tarifaMinima", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => company_entity_1.Company, company => company.parkingLots, { nullable: false }),
+    (0, typeorm_1.JoinColumn)({ name: 'companyId' }),
+    __metadata("design:type", company_entity_1.Company)
+], ParkingLot.prototype, "company", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], ParkingLot.prototype, "companyId", void 0);
 exports.ParkingLot = ParkingLot = __decorate([
     (0, typeorm_1.Entity)()
 ], ParkingLot);

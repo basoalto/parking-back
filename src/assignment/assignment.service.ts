@@ -1,6 +1,7 @@
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { Assignment } from './entities/assignment.entity';
@@ -82,7 +83,25 @@ export class AssignmentService {
     const result = await this.assignmentRepository.delete(id);
     return { deleted: !!result.affected && result.affected > 0 };
   }
-
+  async getTotalByParkingLotAndDate(parkingLotId: number, startDate: string, endDate: string) {
+    // startDate y endDate formato YYYY-MM-DD
+    try {
+      const start = new Date(startDate + 'T00:00:00');
+      const end = new Date(endDate + 'T23:59:59.999');
+      const assignments = await this.assignmentRepository.find({
+        where: {
+          parkingLotId,
+          fechaSalida: Between(start, end),
+        },
+      });
+      // Convertir a número explícitamente para evitar strings y ceros a la izquierda
+      const total = assignments.reduce((sum, a) => sum + Number(a.total || 0), 0);
+      return { total };
+    } catch (error) {
+      console.error('Error en getTotalByParkingLotAndDate:', error);
+      throw new Error('No se pudo calcular el total. Revisa la consola para más detalles.');
+    }
+  }
   async createByPlate(placa: string, parkingLotId: number) {
     // Buscar si la patente ya está registrada
     let car = await this.carRepository.findOneBy({ placa });
